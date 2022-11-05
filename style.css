@@ -1,0 +1,8 @@
+.painel-rolagem{
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+
+.fundo-cinza{
+    background: rgb(237, 237, 237);
+}

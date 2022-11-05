@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/style.css" rel="stylesheet">
+    <title>Máquina de Turing</title>
+</head>
+
+<body onload="limpaDadosDoServidor();">
+    <div id="container"
+        style="text-align: center;font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">
+        <h1>Máquina de Turing</h1>
+        <!-------------------------------------------BLOCO DE CRIAÇÃO DA MÁQUINA DE TURING------------------------------------------------>
+        <!-- campo alfabeto -->
+        <div style="display:flex;">
+            <div style="width: 50%;text-align: right;">Alfabeto: <input type="text" id="alfabeto">
+                <button onclick="salvaAlfabeto()">Salvar</button>
+            </div>
+            <div style="width: 49%;text-align: left; margin-left: 1%;"><span id="alfabeto-salvo"></span></div>
+        </div><br>
+
+        <!-- campo alfabeto auxiliar -->
+        <div style="display:flex;">
+            <div style="width: 50%;text-align: right;">Alfabeto auxiliar: <input type="text" onblur="maiuscula(this)"
+                    onkeypress="maiuscula(this)" id="alfabeto-auxiliar">
+                <button onclick="salvaAlfabetoAuxiliar()">Salvar</button>
+            </div>
+            <div style="width: 49%;text-align: left; margin-left: 1%;"><span id="alfabeto-auxiliar-salvo"></span></div>
+        </div><br>
+
+        <!-- campo quantidade de estados -->
+        <div style="display:flex;">
+            <div style="width: 50%;text-align: right;">Quantidade de estados possíveis: <input type="number" min="1"
+                    id="estados">
+                <button onclick="salvaEstados()">Adicionar</button>
+            </div>
+            <div class="painel-rolagem" style="width: 49%; text-align: left; margin-left: 1%;"><span
+                    id="estados-salvos"></span></div>
+        </div><br>
+
+        <!-- campo de escolha para selecionar o estado inicial -->
+        <div style="display:flex;">
+            <div style="width: 50%;text-align: right;">Estado inicial: <select id="estado-inicial"></select>
+                <button onclick="salvaEstadoInicial()">Salvar</button>
+            </div>
+            <div style="width: 49%;text-align: left; margin-left: 1%;"><span id="estado-inicial-salvo"></span></div>
+        </div><br>
+
+        <!-- campo de caixas de seleção, para escolher os estados finais -->
+        <div style="display:flex;">
+            <div style="width: 50%; text-align: right;">Conjunto de estados finais: <div class="painel-rolagem"
+                    id="estados-finais" style="max-height: 100px;">
+                </div><br>
+                <button onclick="salvaEstadosFinais()">Salvar</button>
+            </div>
+            <div class="painel-rolagem" style="width: 49%;text-align: left; margin-left: 1%;"><span
+                    id="estados-finais-salvos"></span></div>
+        </div><br>
+
+        <!-- símbolos estáticos, simbolo de inicio de fita e símbolo especial branco -->
+        <div style="display:flex;width:100%;">
+            <div style="width: 50%;text-align: right;">Símbolo de início de fita: @</div>
+            <div style="width: 49%;text-align: left; margin-left: 1%;"></div>
+        </div><br>
+        <div style="display:flex;width:100%;">
+            <div style="width: 50%;text-align: right;">Símbolo especial branco: #</div>
+            <div style="width: 49%;text-align: left; margin-left: 1%;"></div>
+        </div><br>
+
+        <!-------------------------------------------BLOCO DE CRIAÇÃO DAS TRANSIÇÕES------------------------------------------------>
+
+        <!-- botão para criar a tabela de transições, após preencher todos os dados do bloco anterior -->
+        <div style="display:flex;width:100%;" class="fundo-cinza">
+            <div style="width: 50%;text-align: right;"></div>
+            <div style="width: 49%;text-align: left; margin-left: 1%;">
+                <br>
+                <button onclick="criaTabela()">Criar tabela de
+                    transições</button>
+            </div>
+        </div>
+
+        <!-- campos de criação da transição -->
+        <!-- bloco inicialmente oculto, que é exibido ao clicar em carregar dados -->
+        <!-- o botão carregar dados busca os estados e entradas cadastrados para  exibir como opção de escolha no cadastro da transição -->
+        <div style="width:100%;display: flex;" class="fundo-cinza">
+            <div style="width: 39%;">
+                <h4>Incluir transição <button onclick="carregarDadosTransicao()">Carregar dados</button></h4>
+                <div id="campos-transicao" style="text-align:left; visibility: hidden;padding-left: 27%;">
+                    <!-- linha e coluna da tabela, onde será armazenada a transição -->
+                    <span>Estado original: <select id="transicao-estado-original"></select></span><br><br>
+                    <span>Entrada original: <select id="transicao-entrada-original"></select></span><br><br>
+
+                    <!-- dados da transição que serão salvos na célula da tabela -->
+                    <span>Estado destino: <select id="transicao-estado-destino"></select></span><br><br>
+                    <span>Entrada que será salva: <select id="transicao-entrada-salva"></select></span><br><br>
+                    <fieldset id="movimento" style="border: 0px;padding: 0%;">
+                        Esquerda <input id="esquerda" type="radio" value="E" name="movimento">
+                        Direita <input id="direita" type="radio" value="D" name="movimento" checked>
+                    </fieldset><br>
+
+                    <button onclick="salvaTransicao()">Salvar transição</button><br>
+                    <p id="transicao-salva"></p>
+
+                    <!-- bloco que remove a transição, informando a linha e a coluna da transição a ser removida -->
+                    <h4>Remover transição</h4>
+                    <div id="remover-transicao" style="text-align:left; visibility: hidden;">
+                        <span>Estado original: <select id="remove-transicao-estado"></select></span><br><br>
+                        <span>Entrada original: <select id="remove-transicao-entrada"></select></span><br><br>
+                        <button onclick="removeTransicao()">Remover transição</button><br>
+                        <p id="transicao-removida"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- local onde é criada a tabela de transição -->
+            <div style="width: 60%;">
+                <div style="width: 100%; text-align: center;">
+                    <p id="tabela-vazia"></p>
+                </div><br>
+                <div class="painel-rolagem" id="tabela" style="width:100%;text-align: center;">
+                </div><br>
+            </div>
+        </div><br>
+        
+        <!-------------------------------------------BLOCO DE TESTE DA PALAVRA------------------------------------------------>
+        <div style="display:flex;">
+            <div style="width: 50%;text-align: right;">Palavra: <input type="text" id="palavra">
+                <button onclick="salvaPalavra();">Salvar</button> <br> <br>
+            </div>
+            <div style="width: 49%;text-align: left; margin-left: 1%;"><span id="palavra-salva"></span></div>
+        </div>
+        <div style="display:flex;">
+            <div style="width: 29%; text-align: center; margin-right: 1%;">
+                <h4>Legenda:</h4>
+                <p>Cabeçote atual: <b style="background-color: lightskyblue;padding:8px;">valor</b></p>
+                <p>Valor gravado: <b style="color:red; padding:8px;">valor</b></p>
+            </div><br>
+            <div style="width: 29%; text-align: center; margin-right: 1%;">
+                <button onclick="criaTabelaTestePalavra()">Executar teste</button> <br>
+                <p id="erro-palavra"></p>
+            </div><br>
+            <div style="width: 70%; text-align: center;">
+                <div class="painel-rolagem" id="tabela-palavra" style="width:100%;text-align: center;">
+                </div><br>
+            </div><br>
+        </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/index.js"></script> <!-- código JS onde está a lógica da aplicação no front-end -->
+
+</html>
